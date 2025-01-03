@@ -1,3 +1,3 @@
-import User from './User';
+import User from "./User.js"
 
-module.exports = { User };
+export { User }

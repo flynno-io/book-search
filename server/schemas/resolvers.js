@@ -1,28 +1,20 @@
-import { User } from "../models"
+import { User } from "../models/index.js"
+import { signToken, AuthenticationError } from '../utils/auth.js'; 
 
 const resolvers = {
-
+  // Queries for GraphQL server
   Query: {
     users: async () => {
       return await User.find()
     },
 
-    user: async (parent, { username }) => {
+    user: async (_, { username }) => {
       return await User.findOne(
         { username }
       )
     },
 
-    book: async (parent, { username, bookId }) => {
-      return await User.findOne({
-        $and: [
-          { username },
-          { "savedBooks.bookId": bookId }
-        ]
-      })
-    },
-
-    me: async (parent, args, context) => {
+    me: async (_, __, context) => {
       if (context.user) {
         return await User.findOne({ _id: context.user._id })
       }
@@ -31,19 +23,21 @@ const resolvers = {
   },
 
   Mutation: {
-    createUser: async (parent, { username, email, password }) => {
-      return await User.create({ username, email, password })
+    createUser: async (_, { userInput }) => {
+      const user = await User.create({ ...userInput})
+      const token = signToken(user)
+      return { token, user }
     },
 
-    saveBook: async (parent, { username, bookData }) => {
+    saveBook: async (_, { bookInput }) => {
       return await User.findOneAndUpdate(
         { username },
-        { $addToSet: { savedBooks: bookData } },
+        { $addToSet: { savedBooks: {...bookInput} } },
         { new: true }
       )
     },
 
-    deleteBook: async (parent, { username, bookId }) => {
+    removeBook: async (_, { username, bookId }) => {
       return await User.findOneAndUpdate(
         { username },
         { $pull: { savedBooks: { bookId } } },
@@ -51,7 +45,7 @@ const resolvers = {
       )
     },
 
-    login: async (parent, { email, password }) => {
+    login: async (_, { email, password }) => {
       const user = await User.findOne({ email })
 
       if (!user) {
@@ -69,3 +63,5 @@ const resolvers = {
     }
   }
 }
+
+export default resolvers
