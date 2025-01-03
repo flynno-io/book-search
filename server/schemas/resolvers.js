@@ -5,25 +5,27 @@ const resolvers = {
   // Queries for GraphQL server
   Query: {
     users: async () => {
-      return await User.find()
+      return await User.find().select('_id username')
     },
 
-    user: async (_, { username }) => {
-      return await User.findOne(
-        { username }
-      )
+    userBooks: async (_, { userId }) => {
+      const user = await User.findById(
+        { userId }
+      ).populate('savedBooks')
+      return user.savedBooks
     },
 
     me: async (_, __, context) => {
       if (context.user) {
-        return await User.findOne({ _id: context.user._id })
+        const userData = await User.findOne({ _id: context.user._id }).select('-__v -password').populate('savedBooks')
+        return userData
       }
-      throw new AuthenticationError('You need to be logged in!')
+      return null // return null if the user is not logged in
     }
   },
 
   Mutation: {
-    createUser: async (_, { userInput }) => {
+    addUser: async (_, { userInput }) => {
       const user = await User.create({ ...userInput})
       const token = signToken(user)
       return { token, user }
