@@ -21,6 +21,7 @@ const resolvers = {
         return userData
       }
       return null // return null if the user is not logged in
+      // throw new AuthenticationError('You need to be logged in!')
     }
   },
 
@@ -31,20 +32,30 @@ const resolvers = {
       return { token, user }
     },
 
-    saveBook: async (_, { bookInput }) => {
-      return await User.findOneAndUpdate(
-        { username },
-        { $addToSet: { savedBooks: {...bookInput} } },
-        { new: true }
-      )
+    saveBook: async (_, { bookInput }, context) => {
+      if (context.user) {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          { $addToSet: { savedBooks: bookInput } },
+          { new: true }
+        )
+
+        return updatedUser
+      }
+      throw new AuthenticationError('You need to be logged in!')
     },
 
-    removeBook: async (_, { username, bookId }) => {
-      return await User.findOneAndUpdate(
-        { username },
-        { $pull: { savedBooks: { bookId } } },
-        { new: true }
-      )
+    removeBook: async (_, { bookId }, context) => {
+      if (context.user) {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          { $pull: { savedBooks: { bookId } } },
+          { new: true }
+        )
+
+        return updatedUser
+      }
+      throw new AuthenticationError('You need to be logged in!')
     },
 
     login: async (_, { email, password }) => {
