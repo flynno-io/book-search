@@ -5,7 +5,7 @@ const resolvers = {
   // Queries for GraphQL server
   Query: {
     users: async () => {
-      return await User.find().select('_id username')
+      return await User.find().select('_id username email')
     },
 
     userBooks: async (_, { userId }) => {
