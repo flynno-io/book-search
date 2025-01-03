@@ -1,7 +1,6 @@
 import express from "express";
 import path from "path";
 import db from "./config/connection.js";
-import routes from "./routes/index.js";
 // GraphQL imports
 import { ApolloServer } from '@apollo/server';// Note: Import from @apollo/server-express
 import { expressMiddleware } from "@apollo/server/express4";
