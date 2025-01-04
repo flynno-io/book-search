@@ -41,7 +41,6 @@ const resolvers = {
           { $addToSet: { savedBooks: bookData } },
           { new: true, runValidators: true }
         )
-        console.log(updatedUser)
         return updatedUser
       }
       throwAuthenticationError('You need to be logged in!')

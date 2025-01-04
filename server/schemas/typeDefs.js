@@ -47,7 +47,7 @@ const typeDefs = `
     login(email: String!, password: String!): Auth
     addUser(userInput: UserInput!): Auth
     saveBook(bookData: BookInput!): User
-    removeBook(bookId: ID!): User
+    removeBook(bookId: String!): User
   }
 `
 

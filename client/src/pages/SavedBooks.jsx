@@ -18,6 +18,7 @@ const SavedBooks = () => {
 		const token = Auth.loggedIn() ? Auth.getToken() : null
 
 		if (!token) {
+      console.log("No token found!")
 			return false
 		}
 
