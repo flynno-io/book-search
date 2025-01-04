@@ -1,11 +1,11 @@
 import { User } from "../models/index.js"
-import { signToken, AuthenticationError } from '../utils/auth.js'; 
+import { signToken, throwAuthenticationError } from '../utils/auth.js'; 
 
 const resolvers = {
   // Queries for GraphQL server
   Query: {
     users: async () => {
-      return await User.find().select('_id username email')
+      return await User.find().select('_id username')
     },
 
     userBooks: async (_, { userId }) => {
@@ -21,7 +21,6 @@ const resolvers = {
         return userData
       }
       return null // return null if the user is not logged in
-      // throw new AuthenticationError('You need to be logged in!')
     }
   },
 
@@ -42,7 +41,7 @@ const resolvers = {
 
         return updatedUser
       }
-      throw new AuthenticationError('You need to be logged in!')
+      throwAuthenticationError('You need to be logged in!')
     },
 
     removeBook: async (_, { bookId }, context) => {
@@ -55,20 +54,20 @@ const resolvers = {
 
         return updatedUser
       }
-      throw new AuthenticationError('You need to be logged in!')
+      throwAuthenticationError('You need to be logged in!')
     },
 
     login: async (_, { email, password }) => {
       const user = await User.findOne({ email })
 
       if (!user) {
-        throw new AuthenticationError('Incorrect credentials')
+        throwAuthenticationError('Incorrect credentials')
       }
 
       const correctPw = await user.isCorrectPassword(password)
 
       if (!correctPw) {
-        throw new AuthenticationError('Incorrect credentials')
+        throwAuthenticationError('Incorrect credentials')
       }
 
       const token = signToken(user)

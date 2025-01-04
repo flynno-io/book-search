@@ -44,6 +44,7 @@ const SearchBooks = () => {
 				title: book.volumeInfo.title,
 				description: book.volumeInfo.description,
 				image: book.volumeInfo.imageLinks?.thumbnail || "",
+        link: book.volumeInfo.infoLink || "",
 			}))
 
 			setSearchedBooks(bookData)
@@ -63,12 +64,14 @@ const SearchBooks = () => {
 		const token = Auth.loggedIn() ? Auth.getToken() : null
 
 		if (!token) {
+      console.log("Not Logged in to save book")
 			return false
 		}
 
 		try {
+      console.log(bookToSave)
 			const { data } = await saveBook({
-				variables: { bookData: { ...bookToSave } },
+				variables: { BookInput: bookToSave },
 			})
 
 			if (!data) {

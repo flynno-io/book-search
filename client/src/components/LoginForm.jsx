@@ -29,10 +29,14 @@ const LoginForm = () => {
       event.stopPropagation();
     }
 
+    console.log('handleFormSubmit', userFormData);
+    
     try {
       const { data } = await loginUser({
         variables: { ...userFormData },
       });
+
+      console.log(data)
 
       Auth.login(data.login.token);
     } catch (err) {

@@ -6,11 +6,13 @@ const secret = 'mysecretsshhhhh';
 const expiration = '2h';
 
 // Export the utility functions and constants
-export const AuthenticationError = new GraphQLError('Could not authenticate user.', {
-  extensions: {
-    code: 'UNAUTHENTICATED',
-  },
-});
+export function throwAuthenticationError(text) {
+  throw new GraphQLError(`${text}`, {
+    extensions: {
+      code: 'UNAUTHENTICATED',
+    },
+  });
+}
 
 // function for authenticated routes
 export function authMiddleware({ req }) {

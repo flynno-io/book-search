@@ -1,23 +1,32 @@
 import express from "express"
 import path from "path"
 import db from "./config/connection.js"
+import cors from 'cors';
 // GraphQL imports
 import { ApolloServer } from "@apollo/server" // Note: Import from @apollo/server-express
 import { expressMiddleware } from "@apollo/server/express4"
 import { typeDefs, resolvers } from "./schemas/index.js"
 import { authMiddleware } from "./utils/auth.js"
 
-if (process.env.NODE_ENV === 'production') {
-  console.log('Running in production mode');
-} else if (process.env.NODE_ENV === 'development') {
-  console.log('Running in development mode');
+if (process.env.NODE_ENV === "production") {
+	console.log("Running in production mode")
+} else if (process.env.NODE_ENV === "development") {
+	console.log("Running in development mode")
 } else {
-  console.log('Unknown environment, defaulting to development');
+	console.log("Unknown environment, defaulting to development")
 }
 
 const app = express()
 const PORT = process.env.PORT || 3001
 const isDevelopment = process.env.NODE_ENV !== "production"
+
+// Add CORS middleware
+app.use(
+	cors({
+		origin: "http://localhost:3000", // Allow the React app's origin to call the server
+    credentials: true, // Allow credentials to be sent from the React app to the server
+	})
+)
 
 const server = new ApolloServer({
 	typeDefs,
@@ -37,31 +46,17 @@ const startApolloServer = async () => {
 		app.use(
 			"/graphql",
 			expressMiddleware(server, {
-				context: ({ req }) => {
-					if (isDevelopment) {
-						return {
-							...req,
-							user: {
-								username: "lukerduke",
-								_id: "67783c120b6497230e62354d",
-								email: "luke@example.com",
-							},
-						}
-					}
-					return authMiddleware(req)
-				},
+				context: ({ req }) => authMiddleware({ req }),
 			})
 		)
 
-    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+		if (!isDevelopment) {
+			app.use(express.static(path.join(__dirname, "../client/dist")))
 
-    if (!isDevelopment) {
-      app.use(express.static(path.join(__dirname, "../client/dist")))
-
-      app.get("*", (req, res) => {
-        res.sendFile(path.join(__dirname, "../client/dist/index.html"))
-      })
-    }
+			app.get("*", (req, res) => {
+				res.sendFile(path.join(__dirname, "../client/dist/index.html"))
+			})
+		}
 
 		app.listen(PORT, () => {
 			console.log(`🌍 Now listening on localhost:${PORT}`)
