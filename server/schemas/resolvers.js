@@ -5,7 +5,7 @@ const resolvers = {
   // Queries for GraphQL server
   Query: {
     users: async () => {
-      return await User.find().select('_id username')
+      return await User.find().select('_id username email')
     },
 
     userBooks: async (_, { userId }) => {
@@ -17,7 +17,10 @@ const resolvers = {
 
     me: async (_, __, context) => {
       if (context.user) {
-        const userData = await User.findOne({ _id: context.user._id }).select('-__v -password').populate('savedBooks')
+        const userData = await User.findOne({ _id: context.user._id })
+          .select('-__v -password')
+          .populate('savedBooks')
+        
         return userData
       }
       return null // return null if the user is not logged in
@@ -31,14 +34,14 @@ const resolvers = {
       return { token, user }
     },
 
-    saveBook: async (_, { bookInput }, context) => {
+    saveBook: async (_, { bookData }, context) => {
       if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.user._id },
-          { $addToSet: { savedBooks: bookInput } },
-          { new: true }
+          { $addToSet: { savedBooks: bookData } },
+          { new: true, runValidators: true }
         )
-
+        console.log(updatedUser)
         return updatedUser
       }
       throwAuthenticationError('You need to be logged in!')

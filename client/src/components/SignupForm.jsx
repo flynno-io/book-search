@@ -31,17 +31,12 @@ const SignupForm = () => {
       event.stopPropagation();
     }
 
-    console.log('handleFormSubmit', userFormData);
-
     try {
       const { data } = await addUser({
-        variables: { ...userFormData },
+        variables: { userInput: {...userFormData} },
       });
 
-      console.log('user data: ', data)
-
       if (!data) {
-        console.log('user not created.');
         throw new Error('something went wrong!');
       }
 
