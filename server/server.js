@@ -38,7 +38,7 @@ const server = new ApolloServer({
 const startApolloServer = async () => {
 	try {
 		await server.start()
-		await db()
+		await db().catch(console.dir); // connect to the database and catch any errors
 
 		app.use(express.urlencoded({ extended: true }))
 		app.use(express.json())
