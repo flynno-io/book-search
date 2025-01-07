@@ -53,13 +53,13 @@ const startApolloServer = async () => {
     // Serve up static assets
     const __dirname = path.resolve()
 
-		if (!isDevelopment) {
-			app.use(express.static(path.join(__dirname, "../client/dist")))
-
-			app.get("*", (req, res) => {
-				res.sendFile(path.join(__dirname, "../client/dist/index.html"))
-			})
-		}
+    if (!isDevelopment) {
+      app.use(express.static(path.join(__dirname, '../client/dist')));
+  
+      app.get('*', (_req, res) => {
+        res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+      });
+    }
 
 		app.listen(PORT, () => {
 			console.log(`🌍 Now listening on localhost:${PORT}`)
