@@ -1,7 +1,7 @@
 import express from "express"
 import path from "path"
 import db from "./config/connection.js"
-import cors from 'cors';
+import cors from "cors"
 // GraphQL imports
 import { ApolloServer } from "@apollo/server" // Note: Import from @apollo/server-express
 import { expressMiddleware } from "@apollo/server/express4"
@@ -24,7 +24,7 @@ const isDevelopment = process.env.NODE_ENV !== "production"
 app.use(
 	cors({
 		origin: "http://localhost:3000", // Allow the React app's origin to call the server
-    credentials: true, // Allow credentials to be sent from the React app to the server
+		credentials: true, // Allow credentials to be sent from the React app to the server
 	})
 )
 
@@ -38,7 +38,7 @@ const server = new ApolloServer({
 const startApolloServer = async () => {
 	try {
 		await server.start()
-		await db().catch(console.dir); // connect to the database and catch any errors
+		await db().catch(console.dir) // connect to the database and catch any errors
 
 		app.use(express.urlencoded({ extended: true }))
 		app.use(express.json())
@@ -50,14 +50,17 @@ const startApolloServer = async () => {
 			})
 		)
 
-    // Serve up static assets
-    if (!isDevelopment) {
-      app.use(express.static(path.join(__dirname, '../client/dist')));
-  
-      app.get('*', (_req, res) => {
-        res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-      });
-    }
+		// Serve up static assets
+		const __filename = fileURLToPath(import.meta.url) // Get the file path
+		const __dirname = path.dirname(__filename) // Get the directory path
+
+		if (!isDevelopment) {
+			app.use(express.static(path.join(__dirname, "../client/dist")))
+
+			app.get("*", (_req, res) => {
+				res.sendFile(path.join(__dirname, "../client/dist/index.html"))
+			})
+		}
 
 		app.listen(PORT, () => {
 			console.log(`🌍 Now listening on localhost:${PORT}`)
