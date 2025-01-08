@@ -15,9 +15,8 @@ const db = async () => {
     }
     await mongoose.connection.db.admin().command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await mongoose.disconnect();
+  } catch (error) {
+    console.error('Error connecting to MongoDB: ', error);
   }
 };
 

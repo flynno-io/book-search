@@ -21,13 +21,13 @@ const app = express()
 const PORT = process.env.PORT || 3001
 const isDevelopment = process.env.NODE_ENV !== "production"
 
-// Add CORS middleware
-app.use(
-	cors({
-		origin: "http://localhost:3000", // Allow the React app's origin to call the server
-		credentials: true, // Allow credentials to be sent from the React app to the server
-	})
-)
+// // Add CORS middleware
+// app.use(
+// 	cors({
+// 		origin: "http://localhost:3000", // Allow the React app's origin to call the server
+// 		credentials: true, // Allow credentials to be sent from the React app to the server
+// 	})
+// )
 
 const server = new ApolloServer({
 	typeDefs,
@@ -39,7 +39,7 @@ const server = new ApolloServer({
 const startApolloServer = async () => {
 	try {
 		await server.start()
-		await db().catch(console.dir) // connect to the database and catch any errors
+		await db()
 
 		app.use(express.urlencoded({ extended: true }))
 		app.use(express.json())
