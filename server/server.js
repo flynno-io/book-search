@@ -51,8 +51,6 @@ const startApolloServer = async () => {
 		)
 
     // Serve up static assets
-    const __dirname = path.resolve()
-
     if (!isDevelopment) {
       app.use(express.static(path.join(__dirname, '../client/dist')));
   
