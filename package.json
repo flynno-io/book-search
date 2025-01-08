@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=production node server/server.js",
     "develop": "NODE_ENV=development concurrently \"cd server && npm run watch\" \"cd client && npm run dev\"",
-    "install": "cd server && npm i && cd ../client && npm i",
+    "install": "cd server && npm i && cd ../client && npm i && npm run build",
     "build": "cd client && npm run build",
     "postinstall": "npm list --depth=0",
     "render-build":"npm install && npm run build"
